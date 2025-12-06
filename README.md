@@ -13,6 +13,28 @@ See `/docs` for detailed design and specification documents:
 - [SECURITY_LOGGING_CHECKLIST.md](docs/SECURITY_LOGGING_CHECKLIST.md)
 - [SECURITY_STATUS.md](SECURITY_STATUS.md)
 
+## UI Overview
+
+The application features a B2B SaaS dashboard layout tailored for two roles:
+
+### Roles & Navigation
+*   **Consultants (GRC Kompas):**
+    *   **Default View:** Portfolio Dashboard (/dashboard/portfolio).
+    *   **Sidebar:** Portfolio, Actions (All), Logout.
+    *   **Capabilities:** View all organisations, drill down into any client detail, see "Consultant View" indicators and Call-to-Action for roadmap sessions.
+*   **Clients (MSPs):**
+    *   **Default View:** Organisation Detail (/dashboard/org/[id]).
+    *   **Sidebar:** My Organisation, Actions (My Org), Logout.
+    *   **Capabilities:** View only their own scores and actions. Access to other data is restricted by RBAC.
+
+### Key Pages
+*   **Portfolio:** Table of all managed MSPs with Risk Levels (High/Medium/Low) and scores.
+*   **Organisation Detail:**
+    *   **Score Card:** Overall NIS2 maturity score.
+    *   **Category Grid:** Governance, Risk Mgmt, Incident, Supply Chain scores.
+    *   **Improvement Actions:** Prioritized list of tasks with status management.
+    *   **Charts:** Visual breakdown of compliance categories.
+
 ## Local Development
 
 ### Prerequisites

@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organisation {
+  id              String   @id @default(uuid())
+  name            String
+  nis2_segment    String?   // e.g., 'Essential', 'Important'
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+
+  users              User[]
+  quickscan_results  QuickscanResult[]
+  risk_scores        RiskScore[]
+  improvement_actions ImprovementAction[]
+
+  @@map("organisations")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password_hash   String
+  role            String    // 'consultant', 'client'
+  organisation_id String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+
+  organisation    Organisation? @relation(fields: [organisation_id], references: [id])
+
+  @@map("users")
+}
+
+model QuickscanResult {
+  id              String   @id @default(uuid())
+  organisation_id String
+  submitted_at    DateTime @default(now())
+  raw_answers     String     // Stored as string for SQLite compatibility
+  source          String?  @default("manual")  // 'tally', 'manual', 'csv'
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("quickscan_results")
+}
+
+model RiskScore {
+  id                    String   @id @default(uuid())
+  organisation_id       String
+  calculated_at         DateTime @default(now())
+  overall_score         Int?
+  governance_score      Int?
+  risk_management_score Int?
+  incident_score        Int?
+  suppliers_score       Int?
+  method_version        String?  @default("v1.0")
+
+  organisation          Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("risk_scores")
+}
+
+model ImprovementAction {
+  id              String   @id @default(uuid())
+  organisation_id String
+  title           String
+  category        String?   // 'governance', 'risk_management', 'incident', 'suppliers', 'other'
+  priority        String?   // 'high', 'medium', 'low'
+  status          String?  @default("open")  // 'open', 'in_progress', 'done'
+  due_date        DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("improvement_actions")
+}

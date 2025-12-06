@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organisation {
+  id              String   @id @default(uuid())
+  name            String   @db.VarChar(255)
+  nis2_segment    String?  @db.VarChar(50) // e.g., 'Essential', 'Important'
+  created_at      DateTime @default(now()) @db.Timestamptz
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  users              User[]
+  quickscan_results  QuickscanResult[]
+  risk_scores        RiskScore[]
+  improvement_actions ImprovementAction[]
+
+  @@map("organisations")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique @db.VarChar(255)
+  password_hash   String   @db.VarChar(255)
+  role            String   @db.VarChar(20) // 'consultant', 'client'
+  organisation_id String?
+  created_at      DateTime @default(now()) @db.Timestamptz
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  organisation    Organisation? @relation(fields: [organisation_id], references: [id])
+
+  @@map("users")
+}
+
+model QuickscanResult {
+  id              String   @id @default(uuid())
+  organisation_id String
+  submitted_at    DateTime @default(now()) @db.Timestamptz
+  raw_answers     Json     // Flexible storage: {"q1": "yes", "q2": "no"}
+  source          String?  @default("manual") @db.VarChar(50) // 'tally', 'manual', 'csv'
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("quickscan_results")
+}
+
+model RiskScore {
+  id                    String   @id @default(uuid())
+  organisation_id       String
+  calculated_at         DateTime @default(now()) @db.Timestamptz
+  overall_score         Int?
+  governance_score      Int?
+  risk_management_score Int?
+  incident_score        Int?
+  suppliers_score       Int?
+  method_version        String?  @default("v1.0") @db.VarChar(10)
+
+  organisation          Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("risk_scores")
+}
+
+model ImprovementAction {
+  id              String   @id @default(uuid())
+  organisation_id String
+  title           String   @db.VarChar(255)
+  category        String?  @db.VarChar(50) // 'governance', 'risk_management', 'incident', 'suppliers', 'other'
+  priority        String?  @db.VarChar(20) // 'high', 'medium', 'low'
+  status          String?  @default("open") @db.VarChar(20) // 'open', 'in_progress', 'done'
+  due_date        DateTime? @db.Date
+  created_at      DateTime @default(now()) @db.Timestamptz
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("improvement_actions")
+}

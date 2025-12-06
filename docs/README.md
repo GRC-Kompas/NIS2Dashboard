@@ -3,7 +3,6 @@
 Dit repository bevat de code en documentatie voor het NIS2-compliance dashboard
 voor MSP's en IT-dienstverleners, ontwikkeld door GRC Kompas.
 
-Zie `/docs` voor:
 - ARCHITECTURE.md
 - DATA_MODEL.md
 - RISK_SCORING.md

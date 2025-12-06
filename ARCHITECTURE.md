@@ -1,0 +1,14 @@
+NIS2 Compliance MVP Architecture1. IntroductionThe NIS2 Compliance MVP is a B2B SaaS platform designed for GRC Kompas. It serves as a multi-tenant compliance dashboard for Managed Service Providers (MSPs) and IT service providers, helping them assess and track their adherence to the NIS2 directive.The platform serves two distinct user groups:Consultants (GRC Kompas): Have a "God-view" portfolio dashboard to oversee all client MSPs, review risk scores, and manage improvement actions.Clients (MSPs): Have access to a dedicated, isolated dashboard for their specific organization to view their own risk posture and status.2. High-Level ArchitectureThe system follows a Monolithic Web Application pattern, optimized for rapid MVP delivery and low operational overhead. It is containerized and hosted on Google Cloud Run, leveraging serverless scalability.Key ComponentsApplication Server: A Next.js application (React frontend + API routes) running in a Docker container on Google Cloud Run.Database: Cloud SQL for PostgreSQL, serving as the persistent relational store.Secrets Management: Google Secret Manager for secure storage of database credentials and API keys.Logging & Monitoring: Google Cloud Logging for centralized application logs and audit trails.Integrations: Accepts Quickscan data via webhooks from external survey tools (e.g., Tally, Bolt) or manual input.Architecture Diagramgraph TD
+    User[User (Consultant/MSP)] -->|HTTPS| LB[Cloud Load Balancer / Ingress]
+    LB -->|Traffic| App[Next.js App (Cloud Run)]
+    
+    subgraph "Google Cloud Project"
+        App -->|Unix Socket / Private IP| DB[(Cloud SQL - PostgreSQL)]
+        App -->|Secret Access| SM[Secret Manager]
+        App -->|Logs| Logging[Cloud Logging]
+    end
+
+    subgraph "External Integrations"
+        Tally[Tally.so / Bolt] -->|Webhook (JSON)| App
+    end
+3. Technology Choices & RationaleWhy Cloud Run + Cloud SQL?Cloud Run: Allows for a "Scale to Zero" cost model, ideal for an MVP with intermittent traffic. It abstracts away infrastructure management while providing a production-grade container runtime.Cloud SQL (PostgreSQL): Provides the robust relational data integrity required for compliance records. PostgreSQL's JSONB support is critical for storing flexible, unstructured survey answers from the Quickscan without constant schema migrations.Multi-Tenancy StrategyWe employ a Shared Database, Shared Schema approach with Row-Level Logical Isolation.Identification: Every data entity (Risk Scores, Actions, Results) is tagged with an organisation_id.Enforcement: Application-level middleware and database queries strictly enforce WHERE organisation_id = X clauses based on the authenticated user's session context.Users: Global users table links users to specific organizations (Clients) or leaves them unlinked (Consultants) for cross-tenant access.

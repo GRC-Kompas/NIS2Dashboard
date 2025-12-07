@@ -13,27 +13,40 @@ See `/docs` for detailed design and specification documents:
 - [SECURITY_LOGGING_CHECKLIST.md](docs/SECURITY_LOGGING_CHECKLIST.md)
 - [SECURITY_STATUS.md](SECURITY_STATUS.md)
 
-## UI Overview
+## UI Overview & Sales Demo v1.2
 
-The application features a B2B SaaS dashboard layout tailored for two roles:
+The application features a B2B SaaS dashboard tailored for sales demos with Dutch copy and specific risk narratives.
 
-### Roles & Navigation
-*   **Consultants (GRC Kompas):**
-    *   **Default View:** Portfolio Dashboard (/dashboard/portfolio).
-    *   **Sidebar:** Portfolio, Actions (All), Logout.
-    *   **Capabilities:** View all organisations, drill down into any client detail, see "Consultant View" indicators and Call-to-Action for roadmap sessions.
-*   **Clients (MSPs):**
-    *   **Default View:** Organisation Detail (/dashboard/org/[id]).
-    *   **Sidebar:** My Organisation, Actions (My Org), Logout.
-    *   **Capabilities:** View only their own scores and actions. Access to other data is restricted by RBAC.
+### Demo Scenario: "A Tale of Two MSPs"
 
-### Key Pages
-*   **Portfolio:** Table of all managed MSPs with Risk Levels (High/Medium/Low) and scores.
-*   **Organisation Detail:**
-    *   **Score Card:** Overall NIS2 maturity score.
-    *   **Category Grid:** Governance, Risk Mgmt, Incident, Supply Chain scores.
-    *   **Improvement Actions:** Prioritized list of tasks with status management.
-    *   **Charts:** Visual breakdown of compliance categories.
+The seed data creates two contrasting MSPs to demonstrate the value of the platform:
+
+1.  **MSP Alpha (High Risk)**
+    *   **Score:** ~40/100 (Red)
+    *   **Narrative:** Struggling with basics. No MFA for admins, no incident procedure.
+    *   **Demo Point:** Use this to show the "Roadmap Session" CTA and urgent "30-day" actions.
+
+2.  **MSP Bravo (Medium Risk)**
+    *   **Score:** ~70/100 (Orange/Yellow)
+    *   **Narrative:** Doing okay on governance, but weak on supply chain controls.
+    *   **Demo Point:** Show how they are "on the right track" but need specific help with vendors to reach "Audit Ready" state.
+
+### Demo Flow
+
+1.  **Login as Consultant:**
+    *   **Email:** `consultant@grc-kompas.com` / `password123`
+    *   **View:** Portfolio Dashboard.
+    *   **Action:** Show the overview of all clients. Point out the red/orange badges. Click on **MSP Alpha**.
+
+2.  **Drill Down (MSP Alpha):**
+    *   **View:** Organisation Detail.
+    *   **Action:** Explain the low scores. Scroll to the "Roadmap Phases" (30 days / 3-6 months).
+    *   **CTA:** Click the "Plan een NIS2-roadmap-sessie" button to demonstrate the sales conversion path.
+
+3.  **Login as Client (Optional):**
+    *   **Email:** `admin@msp-bravo.com` / `password123`
+    *   **View:** Their own dashboard (MSP Bravo).
+    *   **Note:** They cannot see the Portfolio or the Consultant CTA.
 
 ## Local Development
 
@@ -51,11 +64,11 @@ The application features a B2B SaaS dashboard layout tailored for two roles:
     ```
 
 2.  **Environment Setup:**
-    Create a `.env` file in the root directory (copy from `.env.example` if available) and set the following variables:
+    Create a `.env` file (copy from `.env.example`).
     ```env
-    DATABASE_URL="file:./dev.db"  # Use SQLite for local
-    # For Postgres: DATABASE_URL="postgresql://user:password@localhost:5432/nis2db"
+    DATABASE_URL="file:./dev.db"
     NEXTAUTH_SECRET="your-secret-key"
+    NEXT_PUBLIC_CALENDLY_URL="https://calendly.com/grc-kompas/roadmap-session"
     ```
 
 3.  **Database Setup (SQLite):**
@@ -75,47 +88,11 @@ The application features a B2B SaaS dashboard layout tailored for two roles:
     npm test
     ```
 
-### Demo Users (Local Seed)
-
-The seed script creates the following users for local development:
-
-*   **Consultant:**
-    *   Email: `consultant@grc-kompas.com`
-    *   Password: `password123`
-    *   Access: Full Portfolio
-
-*   **Client (MSP Alpha):**
-    *   Email: `admin@msp-alpha.com`
-    *   Password: `password123`
-    *   Access: Only MSP Alpha details
-
-*   **Client (Beta Services):**
-    *   Email: `admin@beta-services.com`
-    *   Password: `password123`
-    *   Access: Only Beta Services details
-
 ## Cloud Run & Production
 
 Refer to [DEPLOYMENT_CLOUD_RUN.md](docs/DEPLOYMENT_CLOUD_RUN.md) for detailed deployment instructions.
 
-### Building & Running Docker Locally
-
-To verify the production build locally:
-
-1.  **Build the image:**
-    ```bash
-    docker build -t nis2-dashboard .
-    ```
-
-2.  **Run the container:**
-    ```bash
-    docker run -p 3000:3000 -e PORT=3000 -e DATABASE_URL="file:./dev.db" -e NEXTAUTH_SECRET="secret" nis2-dashboard
-    ```
-    *Note: For `DATABASE_URL` with SQLite inside Docker, you might need to mount the volume containing `dev.db` or use a Postgres instance.*
-
 ### Switching to PostgreSQL
-
-The application is designed to run on PostgreSQL in production (Cloud SQL).
 
 1.  **Update Prisma Schema:**
     Open `prisma/schema.prisma` and change:

@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, Badge, Button, cn } from '@/components/ui';
 import { getRiskLevel, getRiskColor } from '@/lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ArrowUpRight, Download, Calendar } from 'lucide-react';
+import { ArrowUpRight, Download, Calendar, AlertTriangle, Truck } from 'lucide-react';
+import { IncidentWizard } from '@/components/IncidentWizard';
 
 interface RiskScore {
   overall_score: number;
@@ -44,6 +45,7 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showWizard, setShowWizard] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -101,9 +103,13 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
           window.open(url, '_blank');
       } else {
           console.log('NEXT_PUBLIC_CALENDLY_URL not set');
-          // Fallback or demo behavior
           alert("Opening demo calendar link...");
       }
+  };
+
+  const handleWizardSuccess = (incident: any) => {
+      setShowWizard(false);
+      alert(`Incident "${incident.type}" succesvol gemeld! (Concept)`);
   };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Laden...</div>;
@@ -141,10 +147,18 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
                 <span>Laatste update: <span className="font-medium text-gray-900">{latestScore ? new Date(latestScore.calculated_at).toLocaleDateString() : 'N/A'}</span></span>
             </div>
         </div>
-        <div>
-             <Button variant="outline" onClick={handleExport}>
+        <div className="flex gap-2">
+             <Button variant="primary" className="bg-red-600 hover:bg-red-700" onClick={() => setShowWizard(true)}>
+                 <AlertTriangle className="w-4 h-4 mr-2" />
+                 Meld Incident
+             </Button>
+             <Button variant="outline" onClick={() => router.push(`/dashboard/org/${org.id}/suppliers`)}>
+                 <Truck className="w-4 h-4 mr-2" />
+                 Leveranciers
+             </Button>
+             <Button variant="outline" onClick={() => router.push(`/dashboard/org/${org.id}/board-report`)}>
                  <Download className="w-4 h-4 mr-2" />
-                 Export Report
+                 Rapport
              </Button>
         </div>
       </div>
@@ -337,6 +351,8 @@ export default function OrgDetailPage({ params }: { params: Promise<{ id: string
             </Card>
         </div>
       </div>
+
+      {showWizard && <IncidentWizard organisationId={id as string} onClose={() => setShowWizard(false)} onSuccess={handleWizardSuccess} />}
     </div>
   );
 }

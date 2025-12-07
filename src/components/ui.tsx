@@ -50,15 +50,34 @@ export function Badge({ children, color = 'blue', className }: { children: React
     )
 }
 
-export function Button({ children, className, variant = 'primary', ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'outline' }) {
+export function Button({
+    children,
+    className,
+    variant = 'primary',
+    size = 'md',
+    ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: 'primary' | 'secondary' | 'outline',
+    size?: 'sm' | 'md' | 'lg'
+}) {
     const variants = {
         primary: "bg-brand-primary text-white hover:bg-sky-700 shadow-sm",
         secondary: "bg-brand-dark text-white hover:bg-gray-800 shadow-sm",
         outline: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
     }
+    const sizes = {
+        sm: "px-2.5 py-1.5 text-xs",
+        md: "px-4 py-2 text-sm",
+        lg: "px-6 py-3 text-base"
+    }
     return (
         <button
-            className={cn("inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary", variants[variant], className)}
+            className={cn(
+                "inline-flex items-center border border-transparent font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary",
+                variants[variant],
+                sizes[size],
+                className
+            )}
             {...props}
         >
             {children}

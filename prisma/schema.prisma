@@ -21,6 +21,9 @@ model Organisation {
   quickscan_results  QuickscanResult[]
   risk_scores        RiskScore[]
   improvement_actions ImprovementAction[]
+  incidents          Incident[]
+  suppliers          Supplier[]
+  audit_logs         AuditLog[]
 
   @@map("organisations")
 }
@@ -35,6 +38,7 @@ model User {
   updated_at      DateTime @default(now()) @updatedAt
 
   organisation    Organisation? @relation(fields: [organisation_id], references: [id])
+  audit_logs      AuditLog[]
 
   @@map("users")
 }
@@ -81,4 +85,50 @@ model ImprovementAction {
   organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
 
   @@map("improvement_actions")
+}
+
+model Incident {
+  id              String   @id @default(uuid())
+  organisation_id String
+  type            String
+  impact          String
+  discovered_at   DateTime
+  initial_actions String?
+  contact_name    String?
+  contact_email   String?
+  created_at      DateTime @default(now())
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("incidents")
+}
+
+model Supplier {
+  id              String   @id @default(uuid())
+  organisation_id String
+  name            String
+  type            String?
+  contact_email   String?
+  risk_level      String?  // 'Low', 'Medium', 'High'
+  status          String?  @default("Geen vragenlijst") // 'Geen vragenlijst', 'Vragenlijst verstuurd', 'Beoordeeld'
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+
+  @@map("suppliers")
+}
+
+model AuditLog {
+  id              String   @id @default(uuid())
+  organisation_id String
+  user_id         String?
+  action          String
+  details         String?  // JSON string or text description
+  created_at      DateTime @default(now())
+
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onDelete: Cascade)
+  user            User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
 }

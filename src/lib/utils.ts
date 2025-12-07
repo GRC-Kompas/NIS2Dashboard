@@ -1,15 +1,15 @@
-export function getRiskLevel(score: number | null): 'High' | 'Medium' | 'Low' | 'Unknown' {
-    if (score === null) return 'Unknown';
-    if (score < 50) return 'High';
-    if (score < 80) return 'Medium';
-    return 'Low';
+export function getRiskLevel(score: number | null): 'Hoog risico' | 'Middelgroot risico' | 'Laag risico' | 'Onbekend' {
+    if (score === null) return 'Onbekend';
+    if (score < 50) return 'Hoog risico'; // 0-49
+    if (score < 75) return 'Middelgroot risico'; // 50-74
+    return 'Laag risico'; // 75-100
 }
 
-export function getRiskColor(level: 'High' | 'Medium' | 'Low' | 'Unknown'): 'red' | 'yellow' | 'green' | 'gray' {
+export function getRiskColor(level: 'Hoog risico' | 'Middelgroot risico' | 'Laag risico' | 'Onbekend'): 'red' | 'yellow' | 'green' | 'gray' {
     switch (level) {
-        case 'High': return 'red';
-        case 'Medium': return 'yellow';
-        case 'Low': return 'green';
+        case 'Hoog risico': return 'red';
+        case 'Middelgroot risico': return 'yellow';
+        case 'Laag risico': return 'green';
         default: return 'gray';
     }
 }

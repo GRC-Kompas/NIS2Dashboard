@@ -49,10 +49,10 @@ export default function PortfolioPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-1">
-        <h1 className="text-2xl font-bold text-gray-900">Portfolio Overview</h1>
+        <h1 className="text-2xl font-bold text-gray-900">NIS2-portfolio van MSP-klanten</h1>
         <p className="text-sm text-gray-500">
-            Below is a list of managed MSP clients. The &quot;Overall Score&quot; is derived from their latest NIS2 Quickscan self-assessment.
-            A higher score indicates better compliance maturity.
+            Dit overzicht laat in één oogopslag zien welke MSP-klanten het meeste NIS2-risico lopen.
+            De score is gebaseerd op de NIS2 Quickscan (governance, risicomanagement, incidentrespons en leveranciers).
         </p>
       </div>
 
@@ -62,19 +62,19 @@ export default function PortfolioPage() {
             <thead className="bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Organisation
+                  Organisatie
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Risk Level
+                  Risiconiveau
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Overall Score
+                  NIS2-score
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Calculation
+                  Laatste beoordeling
                 </th>
                 <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">View</span>
+                  <span className="sr-only">Bekijk</span>
                 </th>
               </tr>
             </thead>
@@ -103,7 +103,7 @@ export default function PortfolioPage() {
                              <div className="flex items-center space-x-2">
                                 <span className={cn(
                                     "text-sm font-bold w-8 text-right",
-                                    org.overall_score >= 80 ? "text-green-700" :
+                                    org.overall_score >= 75 ? "text-green-700" :
                                     org.overall_score >= 50 ? "text-yellow-700" : "text-red-700"
                                 )}>
                                     {org.overall_score}%
@@ -111,7 +111,7 @@ export default function PortfolioPage() {
                                 <div className="w-24 bg-gray-200 rounded-full h-1.5 overflow-hidden">
                                     <div
                                         className={cn("h-full rounded-full",
-                                            org.overall_score >= 80 ? "bg-green-500" :
+                                            org.overall_score >= 75 ? "bg-green-500" :
                                             org.overall_score >= 50 ? "bg-yellow-500" : "bg-red-500"
                                         )}
                                         style={{ width: `${org.overall_score}%` }}
@@ -119,7 +119,7 @@ export default function PortfolioPage() {
                                 </div>
                              </div>
                         ) : (
-                            <span className="text-sm text-gray-400 italic">No score</span>
+                            <span className="text-sm text-gray-400 italic">Geen score</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

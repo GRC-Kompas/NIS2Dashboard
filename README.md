@@ -13,40 +13,37 @@ See `/docs` for detailed design and specification documents:
 - [SECURITY_LOGGING_CHECKLIST.md](docs/SECURITY_LOGGING_CHECKLIST.md)
 - [SECURITY_STATUS.md](SECURITY_STATUS.md)
 
-## UI Overview & Sales Demo v1.2
+## Sales Demo Flow
 
-The application features a B2B SaaS dashboard tailored for sales demos with Dutch copy and specific risk narratives.
+This version includes specific features for sales demonstrations.
 
-### Demo Scenario: "A Tale of Two MSPs"
+### Setup
+1. Ensure `.env` has `NEXT_PUBLIC_DEMO_MODE="true"` and `NEXT_PUBLIC_CALENDLY_URL`.
+2. Reset database: `npm run seed` (or use the "Reset Demo" button in the UI if running).
 
-The seed data creates two contrasting MSPs to demonstrate the value of the platform:
+### Demo Scenario
+1.  **Executive Dashboard (Start):**
+    *   **User:** Consultant (`consultant@grc-kompas.com` / `password123`)
+    *   **Pitch:** "One glance overview of your entire portfolio's NIS2 readiness."
+    *   **Visuals:** Traffic lights, aggregate score trend.
 
-1.  **MSP Alpha (High Risk)**
-    *   **Score:** ~40/100 (Red)
-    *   **Narrative:** Struggling with basics. No MFA for admins, no incident procedure.
-    *   **Demo Point:** Use this to show the "Roadmap Session" CTA and urgent "30-day" actions.
+2.  **Portfolio View:**
+    *   **Action:** Navigate to *Portfolio*.
+    *   **Pitch:** "Identify high-risk clients instantly."
+    *   **Demo Point:** Show **MSP Alpha** (High Risk) vs **MSP Bravo** (Medium Risk).
 
-2.  **MSP Bravo (Medium Risk)**
-    *   **Score:** ~70/100 (Orange/Yellow)
-    *   **Narrative:** Doing okay on governance, but weak on supply chain controls.
-    *   **Demo Point:** Show how they are "on the right track" but need specific help with vendors to reach "Audit Ready" state.
+3.  **Deep Dive (MSP Alpha):**
+    *   **Action:** Click on **MSP Alpha**.
+    *   **Pitch:** "Detailed breakdown per NIS2 domain."
+    *   **Feature:** Show *Roadmap Phases* (30 days / 6 months).
+    *   **Feature:** **Incident Wizard**: Click "Meld Incident" to show the wizard flow.
+    *   **Feature:** **Suppliers**: Click "Leveranciers" to show supply chain management.
+    *   **Feature:** **Board Report**: Show the Board Report view.
 
-### Demo Flow
-
-1.  **Login as Consultant:**
-    *   **Email:** `consultant@grc-kompas.com` / `password123`
-    *   **View:** Portfolio Dashboard.
-    *   **Action:** Show the overview of all clients. Point out the red/orange badges. Click on **MSP Alpha**.
-
-2.  **Drill Down (MSP Alpha):**
-    *   **View:** Organisation Detail.
-    *   **Action:** Explain the low scores. Scroll to the "Roadmap Phases" (30 days / 3-6 months).
-    *   **CTA:** Click the "Plan een NIS2-roadmap-sessie" button to demonstrate the sales conversion path.
-
-3.  **Login as Client (Optional):**
-    *   **Email:** `admin@msp-bravo.com` / `password123`
-    *   **View:** Their own dashboard (MSP Bravo).
-    *   **Note:** They cannot see the Portfolio or the Consultant CTA.
+4.  **Closing:**
+    *   **Action:** Click "Plan NIS2-roadmap-sessie".
+    *   **Pitch:** "Direct conversion from analysis to action."
+    *   **Audit:** Show *Audit Log* to demonstrate compliance tracking.
 
 ## Local Development
 
@@ -69,6 +66,7 @@ The seed data creates two contrasting MSPs to demonstrate the value of the platf
     DATABASE_URL="file:./dev.db"
     NEXTAUTH_SECRET="your-secret-key"
     NEXT_PUBLIC_CALENDLY_URL="https://calendly.com/grc-kompas/roadmap-session"
+    NEXT_PUBLIC_DEMO_MODE="true"
     ```
 
 3.  **Database Setup (SQLite):**

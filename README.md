@@ -2,6 +2,10 @@
 
 This repository contains the code and documentation for the NIS2 compliance dashboard for MSPs and IT service providers, developed by GRC Kompas.
 
+🌐 NIS2 Quickscan: https://nis2app.grckompas.nl/
+📝 NIS2-compliance for MSP’s: https://grckompas.nl/
+
+
 ## Documentation
 
 See `/docs` for detailed design and specification documents:
